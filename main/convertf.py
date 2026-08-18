@@ -81,16 +81,27 @@ def removeglyhps(font):
 	alcodes = set(chain(
 		range(0x0000, 0x007F),
 		range(0x02B0, 0x0300),
+		range(0x1100, 0x1200),
 		range(0x2000, 0x2050),
 		range(0x2100, 0x2150),
 		range(0x3000, 0x301D),
+		range(0x3040, 0x30FF),
 		range(0x3100, 0x3130),
+		range(0x3130, 0x3190),
 		range(0x31A0, 0x31E3),
 		range(0xFE10, 0xFE20),
 		range(0xFE30, 0xFE50),
 		range(0xFF01, 0xFF66)
 	))
 	with open(os.path.join(pydir, 'datas/UsedChar.txt'), 'r', encoding = 'utf-8') as f:
+		for line in f.readlines():
+			litm=line.split('#')[0].strip()
+			if litm: alcodes.add(ord(litm))
+	with open(os.path.join(pydir, 'datas/UsedChar_JP.txt'), 'r', encoding = 'utf-8') as f:
+		for line in f.readlines():
+			litm=line.split('#')[0].strip()
+			if litm: alcodes.add(ord(litm))
+	with open(os.path.join(pydir, 'datas/UsedChar_KR.txt'), 'r', encoding = 'utf-8') as f:
 		for line in f.readlines():
 			litm=line.split('#')[0].strip()
 			if litm: alcodes.add(ord(litm))
