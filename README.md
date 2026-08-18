@@ -1,6 +1,9 @@
 **简体中文** [繁體中文](README-TC.md#中文字型簡繁處理工具) 
 
-# 中文字体简繁处理工具
+# 中文字体简繁处理工具（bgtsai fork · 繁體修復版）
+
+> 本 fork 自 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator)，修復內容見文末「本 fork 的修改」章節。
+
 简繁转换字体制作 同义字(简体字 繁体字 异体字)补全字库 合并简繁字体 合并字体。
 
 ## 功能
@@ -28,19 +31,42 @@ Windows 系统下可直接使用图形界面。
 答：工具提供 oftcc 和 FontForge 两种字体处理方法，如果处理失败，可尝试换另一种。如果是在 Windows 系统下处理失败，可尝试使用**不带有中文或特殊符号的路径**。
 #### 2. 对于转换规则不满意，可否自行修改？
 答：可以。本工具所使用的转换字典为纯文本格式，位于 **datas** 目录中。
-#### 3. 本账户下其他支持“一繁多简”的简转繁字体（如尙古字体），其处理方法与本工具相同吗？
-答：不相同。本工具支持词汇级别的简繁转换，在“一简多繁”或“一繁多简”的转换过程中，参考了“[繁媛明朝](https://github.com/ayaka14732/FanWunMing)”的处理方法：先在字体中追加空白字图 A，通过 OpenType 特性将原字词（如“干燥”）替换为空白字图 A，再将空白字图 A 替换为目标字词（“乾燥”）。
-相比之下，这种由词汇到词汇的转换不仅让使用者可以更方便、直接地修改转换字典以满足个性化需求，而且能完美实现区域词汇的转换（例如通过上述流程将“内存”转换为“記憶體”）。
+#### 3. 本账户下其他支持"一繁多简"的简转繁字体（如尙古字体），其处理方法与本工具相同吗？
+答：不相同。本工具支持词汇级别的简繁转换，在"一简多繁"或"一繁多简"的转换过程中，参考了"[繁媛明朝](https://github.com/ayaka14732/FanWunMing)"的处理方法：先在字体中追加空白字图 A，通过 OpenType 特性将原字词（如"干燥"）替换为空白字图 A，再将空白字图 A 替换为目标字词（"乾燥"）。
+相比之下，这种由词汇到词汇的转换不仅让使用者可以更方便、直接地修改转换字典以满足个性化需求，而且能完美实现区域词汇的转换（例如通过上述流程将"内存"转换为"記憶體"）。
 其他注意事项请参阅[《正确实现简转繁字体》](https://ayaka.shn.hk/s2tfont/)。
-#### 4. 工具内的“繁体（预设）”是什么标准？
-答：本工具的核心转换字典主要源自 [OpenCC](https://github.com/BYVoid/OpenCC) 项目；工具内提及的“繁体（预设）”参照 [OpenCC](https://github.com/BYVoid/OpenCC) 标准繁体。
+#### 4. 工具内的"繁体（预设）"是什么标准？
+答：本工具的核心转换字典主要源自 [OpenCC](https://github.com/BYVoid/OpenCC) 项目；工具内提及的"繁体（预设）"参照 [OpenCC](https://github.com/BYVoid/OpenCC) 标准繁体。
 
 ## 下载地址
-可从 [Releases](https://github.com/GuiWonder/TCFontCreator/releases) 页面下载。
+
+**本 fork 打包版**：可从 [Releases](https://github.com/bgtsai/TCFontCreator/releases) 页面下载，直接执行不需要另外安装 Python 或 FontForge。
+
+上游原版：[GuiWonder/TCFontCreator Releases](https://github.com/GuiWonder/TCFontCreator/releases)。
+
+---
+
+## 本 fork 的修改
+
+在使用原版工具处理含日文、韩文的整合字型时，发现一简多繁模式（动态词汇匹配）会误删日韩文字图，追踪后定位到 `removeglyhps()` 的字图清理白名单完全没有涵盖日文假名与韩文字母区段。本 fork 修复了这个问题：
+
+- 白名单新增日文假名（平假名/片假名，`U+3040–U+30FF`）与韩文字母（谚文字母 `U+1100–U+11FF`、谚文兼容字母 `U+3130–U+318F`）区段
+- 新增 `datas/UsedChar_JP.txt`：日本常用汉字表 2136 字（2010 年改定版）
+- 新增 `datas/UsedChar_KR.txt`：KS X 1001 常用韩文音节表 2350 字
+- `converto.py`（otfcc 引擎）与 `convertf.py`（FontForge 引擎）两套实作皆已同步修复
+
+详细的问题根因、修复细节与已知限制，见对应的 commit 记录。
 
 ## 特别感谢
+
+本项目由上游 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator) fork 而来，特别感谢：
+
 * [otfcc](https://github.com/caryll/otfcc)
 * [FontForge](https://github.com/fontforge/fontforge)
 * [Open Chinese Convert](https://github.com/BYVoid/OpenCC)
 * [《正确实现简转繁字体》](https://ayaka.shn.hk/s2tfont/)、[繁媛明朝](https://github.com/ayaka14732/FanWunMing)
 
+本 fork 额外引用：
+
+* [tsmsogn/joyo_kanji](https://github.com/tsmsogn/joyo_kanji) —— 日本常用汉字表（2010 年改定版）2136 字清单资料来源
+* KS X 1001 —— 韩国国家标准，本 fork 新增的常用韩文音节清单（2350 字）依此标准透过 `euc_kr` 编码表推算取得

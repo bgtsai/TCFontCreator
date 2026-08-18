@@ -1,6 +1,9 @@
 [简体中文](../../#中文字体简繁处理工具) **繁體中文** 
 
-# 中文字型簡繁處理工具
+# 中文字型簡繁處理工具（bgtsai fork · 繁體修復版）
+
+> 本 fork 自 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator)，修復內容見文末「本 fork 的修改」章節。
+
 簡繁轉換字型製作 同義字(簡體字 繁體字 異體字)補全字型檔 合併簡繁字型 合併字型。
 
 ## 功能
@@ -36,11 +39,35 @@ Windows 系統下可直接使用圖形介面。
 答：本工具的核心轉換字表主要源自 [OpenCC](https://github.com/BYVoid/OpenCC) 專案；工具內提及的「繁體（預設）」參照 [OpenCC](https://github.com/BYVoid/OpenCC) 標準繁體。
 
 ## 下載地址
-可從 [Releases](https://github.com/GuiWonder/TCFontCreator/releases) 頁面下載。
+
+**本 fork 打包版**：可從 [Releases](https://github.com/bgtsai/TCFontCreator/releases) 頁面下載，直接執行不需要另外安裝 Python 或 FontForge。
+
+上游原版：[GuiWonder/TCFontCreator Releases](https://github.com/GuiWonder/TCFontCreator/releases)。
+
+---
+
+## 本 fork 的修改
+
+在使用原版工具處理含日文、韓文的整合字型時，發現一簡多繁模式（動態詞彙匹配）會誤刪日韓文字圖，追蹤後定位到 `removeglyhps()` 的字圖清理白名單完全沒有涵蓋日文假名與韓文字母區段。本 fork 修復了這個問題：
+
+- 白名單新增日文假名（平假名/片假名，`U+3040–U+30FF`）與韓文字母（諺文字母 `U+1100–U+11FF`、諺文相容字母 `U+3130–U+318F`）區段
+- 新增 `datas/UsedChar_JP.txt`：日本常用漢字表 2136 字（2010 年改定版）
+- 新增 `datas/UsedChar_KR.txt`：KS X 1001 常用韓文音節表 2350 字
+- `converto.py`（otfcc 引擎）與 `convertf.py`（FontForge 引擎）兩套實作皆已同步修復
+
+詳細的問題根因、修復細節與已知限制，見對應的 commit 紀錄。
 
 ## 特別感謝
+
+本專案由上游 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator) fork 而來，特別感謝：
+
 * [otfcc](https://github.com/caryll/otfcc)
 * [FontForge](https://github.com/fontforge/fontforge)
 * [Open Chinese Convert](https://github.com/BYVoid/OpenCC)
 * [《正確實現簡轉繁字型》](https://ayaka.shn.hk/s2tfont/hant/)、[繁媛明朝](https://github.com/ayaka14732/FanWunMing)
+
+本 fork 額外引用：
+
+* [tsmsogn/joyo_kanji](https://github.com/tsmsogn/joyo_kanji) —— 日本常用漢字表（2010 年改定版）2136 字清單資料來源
+* KS X 1001 —— 韓國國家標準，本 fork 新增的常用韓文音節清單（2350 字）依此標準透過 `euc_kr` 編碼表推算取得
 
