@@ -105,6 +105,12 @@ def removeglyhps(font):
 		for line in f.readlines():
 			litm=line.split('#')[0].strip()
 			if litm: alcodes.add(ord(litm))
+	custompath = os.path.join(pydir, 'datas/UsedChar_Custom.txt')
+	if os.path.exists(custompath):
+		with open(custompath, 'r', encoding = 'utf-8') as f:
+			for line in f.readlines():
+				litm=line.split('#')[0].strip()
+				if litm: alcodes.add(ord(litm))
 	useg=set()
 	for gls in font.glyphs():
 		if gls.glyphname in ('.notdef', '.null', 'nonmarkingreturn', 'NULL', 'NUL'):
