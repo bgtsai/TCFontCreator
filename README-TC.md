@@ -57,6 +57,10 @@ Windows 系統下可直接使用圖形介面。
 
 詳細的問題根因、修復細節與已知限制，見對應的 commit 紀錄。
 
+### 自訂保留清單
+
+除了內建的常用漢字表、常用韓文音節表，新增了 `datas/UsedChar_Custom.txt`，讓使用者可以自行補充「常用清單沒收錄、但希望轉換後保留」的字——例如日本人名用漢字、罕見國字等。使用方式與其他 `UsedChar_*.txt` 相同：逐字一行，`#` 開頭的整行視為註解。這份檔案本身可選，不存在也不影響其他保留清單正常運作。
+
 ## 特別感謝
 
 本專案由上游 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator) fork 而來，特別感謝：
