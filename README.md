@@ -2,9 +2,26 @@
 
 # 中文字体简繁处理工具（bgtsai fork · 繁體修復版）
 
-> 本 fork 自 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator)，修復內容見文末「本 fork 的修改」章節。
+> 本 fork 自 [GuiWonder/TCFontCreator](https://github.com/GuiWonder/TCFontCreator)，修復內容見下方「本 fork 的修改」章節。
 
 简繁转换字体制作 同义字(简体字 繁体字 异体字)补全字库 合并简繁字体 合并字体。
+
+## 本 fork 的修改
+
+在使用原版工具处理含日文、韩文的整合字型时，发现一简多繁模式（动态词汇匹配）会误删日韩文字图，追踪后定位到 `removeglyhps()` 的字图清理白名单完全没有涵盖日文假名与韩文字母区段。本 fork 修复了这个问题：
+
+- 白名单新增日文假名（平假名/片假名，`U+3040–U+30FF`）与韩文字母（谚文字母 `U+1100–U+11FF`、谚文兼容字母 `U+3130–U+318F`）区段
+- 新增 `datas/UsedChar_JP.txt`：日本常用汉字表 2136 字（2010 年改定版）
+- 新增 `datas/UsedChar_KR.txt`：KS X 1001 常用韩文音节表 2350 字
+- `converto.py`（otfcc 引擎）与 `convertf.py`（FontForge 引擎）两套实作皆已同步修复
+
+详细的问题根因、修复细节与已知限制，见对应的 commit 记录。
+
+### 自订保留清单
+
+除了内建的常用汉字表、常用韩文音节表，新增了 `datas/UsedChar_Custom.txt`，让使用者可以自行补充「常用清单没收录、但希望转换后保留」的字——例如日本人名用汉字、罕见国字等。使用方式与其他 `UsedChar_*.txt` 相同：逐字一行，`#` 开头的整行视为注释。这份文件本身可选，不存在也不影响其他保留清单正常运作。
+
+---
 
 ## 功能
 ### 生成简繁转换字体
@@ -43,23 +60,6 @@ Windows 系统下可直接使用图形界面。
 **本 fork 打包版**：可从 [Releases](https://github.com/bgtsai/TCFontCreator/releases) 页面下载，直接执行不需要另外安装 Python 或 FontForge。
 
 上游原版：[GuiWonder/TCFontCreator Releases](https://github.com/GuiWonder/TCFontCreator/releases)。
-
----
-
-## 本 fork 的修改
-
-在使用原版工具处理含日文、韩文的整合字型时，发现一简多繁模式（动态词汇匹配）会误删日韩文字图，追踪后定位到 `removeglyhps()` 的字图清理白名单完全没有涵盖日文假名与韩文字母区段。本 fork 修复了这个问题：
-
-- 白名单新增日文假名（平假名/片假名，`U+3040–U+30FF`）与韩文字母（谚文字母 `U+1100–U+11FF`、谚文兼容字母 `U+3130–U+318F`）区段
-- 新增 `datas/UsedChar_JP.txt`：日本常用汉字表 2136 字（2010 年改定版）
-- 新增 `datas/UsedChar_KR.txt`：KS X 1001 常用韩文音节表 2350 字
-- `converto.py`（otfcc 引擎）与 `convertf.py`（FontForge 引擎）两套实作皆已同步修复
-
-详细的问题根因、修复细节与已知限制，见对应的 commit 记录。
-
-### 自订保留清单
-
-除了内建的常用汉字表、常用韩文音节表，新增了 `datas/UsedChar_Custom.txt`，让使用者可以自行补充「常用清单没收录、但希望转换后保留」的字——例如日本人名用汉字、罕见国字等。使用方式与其他 `UsedChar_*.txt` 相同：逐字一行，`#` 开头的整行视为注释。这份文件本身可选，不存在也不影响其他保留清单正常运作。
 
 ## 特别感谢
 
