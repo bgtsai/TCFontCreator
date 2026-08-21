@@ -356,10 +356,11 @@ def stts(font, wkon, vr=False):
 			codestc = set(ord(c) for c in s+t)
 			if codestc.issubset(ccods):
 				stword.append((s, t))
+		sumf = sum(1 for _ in font.glyphs())
 		if len(stword) > 0:
-			sumf = sum(1 for _ in font.glyphs())
 			if len(stword) + sumf > 65535:
-				raise RuntimeError('Not enough glyph space! You need ' + str(len(stword) + sumf - 65535) + ' more glyph space!')
+				nd = len(stword) + sumf - 65535
+				raise RuntimeError('Not enough glyph space! Please remove ' + str(nd) + ' character(s) from your custom reserved list (datas/UsedChar_Custom.txt or other UsedChar_*.txt files) and try again. (字圖空間不足，請從自訂保留清單 datas/UsedChar_Custom.txt 或其他保留清單中，減少 ' + str(nd) + ' 個字元後再試一次)')
 			stword.sort(key=lambda x:len(x[0]), reverse = True)
 			i, j, tlen, wlen = 0, 0, 0, len(stword[0][0])
 			font.addLookupSubtable('stmult', 'stmult0')
@@ -375,6 +376,9 @@ def stts(font, wkon, vr=False):
 					font.addLookupSubtable('stliga', 'stliga' + str(j), 'stliga' + str(j - 1))
 				i += 1
 				addlookupsword(font, code_glyph, wd[1], wd[0], str(j), str(i))
+			sumf = sum(1 for _ in font.glyphs())
+		remaining = 65535 - sumf
+		print('Remaining glyph space for custom reserved characters: ' + str(remaining) + ' (剩餘可用於自訂保留清單的字圖空間：' + str(remaining) + ' 個字元)')
 
 def setnm(font, ennm, tcnm='', scnm='', versn=''):
 	print('Processing font name...')
