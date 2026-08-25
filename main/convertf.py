@@ -100,6 +100,10 @@ def removeglyhps(font):
 		for line in f.readlines():
 			litm=line.split('#')[0].strip()
 			if litm: alcodes.add(ord(litm))
+	with open(os.path.join(pydir, 'datas/UsedChar_JP_Jinmei.txt'), 'r', encoding = 'utf-8') as f:
+		for line in f.readlines():
+			litm=line.split('#')[0].strip()
+			if litm: alcodes.add(ord(litm))
 	with open(os.path.join(pydir, 'datas/UsedChar_KR.txt'), 'r', encoding = 'utf-8') as f:
 		for line in f.readlines():
 			litm=line.split('#')[0].strip()
