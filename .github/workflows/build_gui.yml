@@ -1,10 +1,27 @@
 name: Build GUI exe
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: '要發佈的 release tag（留空＝只編譯 exe，不發佈）'
+        required: false
+        default: ''
+      base_tag:
+        description: '以哪個舊 release 的 zip 為基底（內含 python / FontForge / otfcc）'
+        required: false
+        default: ''
+      notes:
+        description: 'release 說明'
+        required: false
+        default: ''
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: microsoft/setup-msbuild@v2
@@ -29,3 +46,27 @@ jobs:
         with:
           name: gui-exe
           path: out/TCFontCreator.exe
+      - name: Package and publish release
+        if: ${{ inputs.tag != '' && inputs.base_tag != '' }}
+        shell: pwsh
+        run: |
+          for ($i = 1; $i -le 3; $i++) {
+            gh release download "${{ inputs.base_tag }}" -p TC-TCFontCreator.zip -D base --clobber
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($i -eq 3) { exit 1 }; Start-Sleep 10
+          }
+          Expand-Archive base/TC-TCFontCreator.zip -DestinationPath pkg
+          Copy-Item out/TCFontCreator.exe "pkg/中文字體簡繁處理工具.exe" -Force
+          Copy-Item main/*.py pkg/ -Force
+          Copy-Item main/datas/* pkg/datas/ -Force
+          Copy-Item gui/locales/* pkg/locales/ -Force
+          Compress-Archive -Path pkg/* -DestinationPath TC-TCFontCreator.zip
+          Set-Content -Path notes.md -Value "${{ inputs.notes }}" -Encoding utf8
+          for ($i = 1; $i -le 3; $i++) {
+            gh release create "${{ inputs.tag }}" TC-TCFontCreator.zip --target main --title "${{ inputs.tag }}" --notes-file notes.md
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            gh release view "${{ inputs.tag }}" *> $null
+            if ($LASTEXITCODE -eq 0) { gh release upload "${{ inputs.tag }}" TC-TCFontCreator.zip --clobber; if ($LASTEXITCODE -eq 0) { exit 0 } }
+            Start-Sleep 10
+          }
+          exit 1
