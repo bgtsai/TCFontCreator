@@ -14,10 +14,33 @@ on:
         description: 'release 說明'
         required: false
         default: ''
+      retitle_only:
+        description: '只把 tag 對應 release 的標題改成標準格式，不編譯不打包'
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: write
 jobs:
+  retitle:
+    if: ${{ inputs.retitle_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: 改標題為「TCFontCreator（繁體修復版）日期」
+        run: |
+          title="TCFontCreator（繁體修復版）${TAG#tc-}"
+          delays=(5 15 30 60)
+          for i in 1 2 3 4 5; do
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "$title" && { echo "已改為：$title"; exit 0; }
+            [ "$i" -eq 5 ] && exit 1
+            sleep "${delays[$((i-1))]}"
+          done
   build:
+    if: ${{ !inputs.retitle_only }}
     runs-on: windows-latest
     timeout-minutes: 30
     env:
@@ -62,8 +85,10 @@ jobs:
           Copy-Item gui/locales/* pkg/locales/ -Force
           Compress-Archive -Path pkg/* -DestinationPath TC-TCFontCreator.zip
           Set-Content -Path notes.md -Value "${{ inputs.notes }}" -Encoding utf8
+          # 標題沿用既有格式：TCFontCreator（繁體修復版）＋ tag 去掉 tc- 前綴
+          $title = "TCFontCreator（繁體修復版）" + ("${{ inputs.tag }}" -replace '^tc-', '')
           for ($i = 1; $i -le 3; $i++) {
-            gh release create "${{ inputs.tag }}" TC-TCFontCreator.zip --target main --title "${{ inputs.tag }}" --notes-file notes.md
+            gh release create "${{ inputs.tag }}" TC-TCFontCreator.zip --target main --title $title --notes-file notes.md
             if ($LASTEXITCODE -eq 0) { exit 0 }
             gh release view "${{ inputs.tag }}" *> $null
             if ($LASTEXITCODE -eq 0) { gh release upload "${{ inputs.tag }}" TC-TCFontCreator.zip --clobber; if ($LASTEXITCODE -eq 0) { exit 0 } }
