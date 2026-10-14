@@ -38,6 +38,8 @@ namespace TCFontCreator
                 tbit.Visibility = Visibility.Hidden;
             }
             P_Click(p1, null);
+            ckSync.Checked += DisableElement;
+            ckSync.Unchecked += DisableElement;
             DisableElement();
             Closing += MainWindow_Closing;
 
@@ -97,6 +99,8 @@ namespace TCFontCreator
             tbOut.Text = Trans("保存爲");
             tbTool.Text = Trans("處理工具");
             ckV.Content = Trans("使用簡繁異體補充字庫");
+            ckSync.Content = Trans("線上更新保留字清單");
+            ckSyncStrict.Content = Trans("同步失敗時停止轉換");
             tbSTMul.Text = Trans("一簡多繁處理方式");
             rdSTN.Content = Trans("不處理一簡多繁");
             rdSTOne.Content = Trans("使用單一常用字");
@@ -235,6 +239,7 @@ namespace TCFontCreator
             btFs.IsEnabled = rdMg.IsChecked == true;
             btInT2.IsEnabled = txInT2.IsEnabled = rdFan.IsChecked == true;
             gdSTVar.IsEnabled = rdSTMT.IsChecked != true;
+            if (ckSync != null && ckSyncStrict != null) ckSyncStrict.IsEnabled = ckSync.IsChecked == true;
         }
 
         private void P_Click(object sender, RoutedEventArgs e)
@@ -372,6 +377,11 @@ namespace TCFontCreator
                 {
                     cmdline += " -ih";
                 }
+            }
+            if (ckSync.IsChecked == true)
+            {
+                cmdline += " -sync";
+                if (ckSyncStrict.IsChecked == true) cmdline += " -syncstrict";
             }
             cmdline = $"\"{exefile}\" -u -X utf8 {cmdline}";
             if (!isOtfcc)

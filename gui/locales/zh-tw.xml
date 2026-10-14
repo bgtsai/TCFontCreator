@@ -11,6 +11,8 @@
 	<Item from="保存爲" to="儲存為"/>
 	<Item from="" to="處理工具"/>
 	<Item from="使用簡繁異體補充字庫" to="使用簡繁異體補充字型檔案"/>
+	<Item from="線上更新保留字清單" to="線上更新保留字清單"/>
+	<Item from="同步失敗時停止轉換" to="同步失敗時停止轉換"/>
 	<Item from="" to="一簡多繁處理方式"/>
 	<Item from="" to="不處理一簡多繁"/>
 	<Item from="" to="使用單一常用字"/>

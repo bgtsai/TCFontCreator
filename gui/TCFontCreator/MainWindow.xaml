@@ -188,8 +188,12 @@
                             <TextBlock x:Name="tbIn" Text="要處理的字體" Grid.Row="1"/>
                             <TextBlock x:Name="tbOut" Text="保存爲" Grid.Row="2"/>
                             <TextBlock x:Name="tbTool" Text="處理工具" Grid.Row="3"/>
-                            <CheckBox x:Name="ckV" Content="使用簡繁異體補充字庫" IsChecked="True" Grid.Row="4" Margin="5,0,5,0" Grid.ColumnSpan="3" HorizontalAlignment="Left"/>
-                            <CheckBox x:Name="ckHint" Content="移除 hinting" Grid.Row="4" Margin="5,0,5,0" Grid.ColumnSpan="3" HorizontalAlignment="Left"/>
+                            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Left">
+                                <CheckBox x:Name="ckV" Content="使用簡繁異體補充字庫" IsChecked="True" Margin="5,0,5,0"/>
+                                <CheckBox x:Name="ckHint" Content="移除 hinting" Margin="5,0,5,0"/>
+                                <CheckBox x:Name="ckSync" Content="線上更新保留字清單" IsChecked="True" Margin="15,0,5,0"/>
+                                <CheckBox x:Name="ckSyncStrict" Content="同步失敗時停止轉換" IsChecked="True" Margin="15,0,5,0"/>
+                            </StackPanel>
                             <StackPanel x:Name="spMD1" Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2">
                                 <RadioButton x:Name="rdST" Content="生成簡轉繁字體" IsChecked="True"/>
                                 <RadioButton x:Name="rdTS" Content="生成繁轉簡字體" Margin="20,0,0,0"/>
